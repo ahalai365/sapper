@@ -1,19 +1,30 @@
 import { React, useContext, useRef, useEffect } from "react";
 import "./timer.styles.css";
 
-import { Number } from "../number/number.component";
-import { GetTimer } from "../../App";
+import { Number } from "./../number/number.component";
+import { GetTimer, ToggleReset } from "./../../App";
 
 export function Timer() {
   const getTimer = useContext(GetTimer);
+  const gameIsReset = useContext(ToggleReset);
+
   const intervalRef = useRef();
 
   useEffect(() => {
-    intervalRef.current = setInterval(
-      () => timer(getTimer.data, intervalRef.current),
-      1000
-    );
-  }, []);
+    if (!gameIsReset.data) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = setInterval(
+        () => timer(getTimer.data, intervalRef.current),
+        1000
+      );
+    } else {
+      clearInterval(intervalRef.current);
+      intervalRef.current = setInterval(
+        () => timer(getTimer.data, intervalRef.current),
+        1000
+      );
+    }
+  }, [gameIsReset.data]);
 
   function timer(value, clock) {
     if (value[0] === 9 && value[1] === 9 && value[2] === 9) {

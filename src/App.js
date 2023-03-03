@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState, createContext } from "react";
+import React, { useState, createContext, useRef, useEffect } from "react";
 
 import { Game } from "./components/game/game.component";
 import { Header } from "./components/header/header.component";
@@ -8,11 +8,13 @@ import { Field } from "./components/field/field.component";
 export const ArrMine = createContext();
 export const GetTimer = createContext();
 export const GetScore = createContext();
+export const ToggleReset = createContext();
 
 function App() {
   const [arrMine, setArrMine] = useState(fieldMaker());
   const [time, setTime] = useState([0, 0, 0]);
   const [score, setScore] = useState([0, 4, 0]);
+  const [toggleReset, setToggleReset] = useState(true);
 
   function fieldMaker() {
     const field = [];
@@ -56,10 +58,19 @@ function App() {
             },
           }}
         >
-          <Game>
-            <Header />
-            <Field />
-          </Game>
+          <ToggleReset.Provider
+            value={{
+              data: toggleReset,
+              setData: (data) => {
+                setToggleReset(data);
+              },
+            }}
+          >
+            <Game>
+              <Header />
+              <Field />
+            </Game>
+          </ToggleReset.Provider>
         </GetScore.Provider>
       </GetTimer.Provider>
     </ArrMine.Provider>
