@@ -1,0 +1,46 @@
+.number {
+  width: 13px;
+  height: 24px;
+
+  background: url(./../../sprites/minesweeper-sprites_9TPZzv3.png);
+}
+
+.number_one {
+  background-position: 0 0;
+}
+
+.number_two {
+  background-position: -14px 0;
+}
+
+.number_three {
+  background-position: -28px 0;
+}
+
+.number_four {
+  background-position: -42px 0;
+}
+
+.number_five {
+  background-position: -56px 0;
+}
+
+.number_six {
+  background-position: -70px 0;
+}
+
+.number_seven {
+  background-position: -84px 0;
+}
+
+.number_eight {
+  background-position: -98px 0;
+}
+
+.number_nine {
+  background-position: -112px 0;
+}
+
+.number_zero {
+  background-position: 13px 0;
+}
