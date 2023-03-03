@@ -1,0 +1,13 @@
+.game {
+  display: flex;
+  flex-direction: column;
+
+  width: 278px;
+  /* height: 304px; */
+  background-color: rgb(192, 192, 192);
+
+  margin: 5vh auto;
+  padding: 5px;
+
+  border: 3px outset rgba(255, 255, 255);
+}

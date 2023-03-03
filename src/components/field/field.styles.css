@@ -1,0 +1,7 @@
+.field {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  border: 3px inset rgba(255, 255, 255);
+}

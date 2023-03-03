@@ -1,0 +1,10 @@
+.smile {
+  height: 26px;
+  width: 26px;
+  background: url(./../../sprites/minesweeper-sprites_9TPZzv3.png);
+  background-position: -1px 59px;
+}
+
+.smile:active {
+  background-position: 84px 59px;
+}

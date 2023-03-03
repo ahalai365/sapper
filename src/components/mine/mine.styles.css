@@ -1,0 +1,11 @@
+.mine {
+  width: 17px;
+  height: 17px;
+
+  background: url(./../../sprites/minesweeper-sprites_9TPZzv3.png);
+  background-position: 0 33px;
+}
+
+.mine:active {
+  background-position: -16px 33px;
+}
