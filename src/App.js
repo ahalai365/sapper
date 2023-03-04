@@ -6,26 +6,30 @@ import { Header } from "./components/header/header.component";
 import { Field } from "./components/field/field.component";
 
 export const ArrMine = createContext();
-export const GetTimer = createContext();
+// export const GetTimer = createContext();
 export const GetScore = createContext();
-export const ToggleReset = createContext();
+export const GameIsStart = createContext();
+// export const IsFirstClick = createContext();
 
 function App() {
   const [arrMine, setArrMine] = useState(fieldMaker());
-  const [time, setTime] = useState([0, 0, 0]);
+  // const [time, setTime] = useState([0, 0, 0]);
   const [score, setScore] = useState([0, 4, 0]);
-  const [toggleReset, setToggleReset] = useState(true);
+  const [gameIsStart, setGameIsStart] = useState(true);
+  // const [isFirstClick, setIsFirstClick] = useState(true);
 
   function fieldMaker() {
     const field = [];
-    for (let i = 1; i < 257; ++i) {
+    for (let i = 0; i < 256; ++i) {
       const mine = {
         id: i,
-        mine: false,
-        flag: false,
+        armed: false,
         unknow: false,
-        open: false,
+        flag: false,
+        disarmed: false,
         number: null,
+        mistake: false,
+        open: false,
       };
       field.push(mine);
     }
@@ -42,37 +46,46 @@ function App() {
         },
       }}
     >
-      <GetTimer.Provider
+      {/* <GetTimer.Provider
         value={{
           data: time,
           setTime: (data) => {
             setTime(data);
           },
         }}
+      > */}
+      <GetScore.Provider
+        value={{
+          data: score,
+          setData: (data) => {
+            setScore(data);
+          },
+        }}
       >
-        <GetScore.Provider
+        <GameIsStart.Provider
           value={{
-            data: score,
+            data: gameIsStart,
             setData: (data) => {
-              setScore(data);
+              setGameIsStart(data);
             },
           }}
         >
-          <ToggleReset.Provider
+          {/* <IsFirstClick.Provider
             value={{
-              data: toggleReset,
+              data: isFirstClick,
               setData: (data) => {
-                setToggleReset(data);
+                setIsFirstClick(data);
               },
             }}
-          >
+          > */}
             <Game>
               <Header />
               <Field />
             </Game>
-          </ToggleReset.Provider>
-        </GetScore.Provider>
-      </GetTimer.Provider>
+          {/* </IsFirstClick.Provider> */}
+        </GameIsStart.Provider>
+      </GetScore.Provider>
+      {/* </GetTimer.Provider> */}
     </ArrMine.Provider>
   );
 }

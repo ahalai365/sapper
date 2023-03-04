@@ -1,12 +1,13 @@
 import { React, useContext } from "react";
 import "./smile.styles.css";
 
-import { GetTimer, GetScore, ToggleReset } from "../../App";
+import { GetScore, GameIsStart } from "../../App";
+import { GetTimer } from "./../header/header.component";
 
 export function Smile() {
   const newTimer = [0, 0, 0];
 
-  const gameIsReset = useContext(ToggleReset);
+  const gameIsReset = useContext(GameIsStart);
   const getTimer = useContext(GetTimer);
 
   function handleClick() {

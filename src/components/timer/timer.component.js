@@ -2,11 +2,12 @@ import { React, useContext, useRef, useEffect } from "react";
 import "./timer.styles.css";
 
 import { Number } from "./../number/number.component";
-import { GetTimer, ToggleReset } from "./../../App";
+import { GameIsStart, ToggleReset } from "./../../App";
+import { GetTimer } from "./../header/header.component";
 
 export function Timer() {
   const getTimer = useContext(GetTimer);
-  const gameIsReset = useContext(ToggleReset);
+  const gameIsReset = useContext(GameIsStart);
 
   const intervalRef = useRef();
 

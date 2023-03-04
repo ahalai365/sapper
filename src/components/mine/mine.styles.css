@@ -3,9 +3,68 @@
   height: 17px;
 
   background: url(./../../sprites/minesweeper-sprites_9TPZzv3.png);
-  background-position: 0 33px;
 }
 
-.mine:active {
+.mine_close {
+  background-position: 1px 33px;
+}
+
+.mine_open {
   background-position: -16px 33px;
+}
+
+.mine_mistake {
+  background-position: 20px 33px;
+}
+
+.mine_armed {
+  background-position: 54px 33px;
+}
+
+.mine_flag {
+  background-position: 106px 33px;
+}
+
+.mine_unknow {
+  background-position: 89px 33px;
+}
+
+.mine_unknow:active {
+  background-position: 71px 33px;
+}
+
+.mine_disarmed {
+  background-position: 20px 33px;  
+}
+
+.mine_one {
+  background-position: 139px 17px;  
+}
+
+.mine_two {
+  background-position: 122px 17px;
+}
+
+.mine_three {
+  background-position: 105px 17px;
+}
+
+.mine_four {
+  background-position: 88px 17px;
+}
+
+.mine_five {
+  background-position: 71px 17px;
+}
+
+.mine_six {
+  background-position: 54px 17px;
+}
+
+.mine_seven {
+  background-position: 37px 17px;
+}
+
+.mine_eight {
+  background-position: 20px 17px;
 }
