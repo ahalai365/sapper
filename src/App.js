@@ -11,82 +11,101 @@ export const GetScore = createContext();
 export const GameIsStart = createContext();
 // export const IsFirstClick = createContext();
 
+function fieldMaker() {
+  const field = [];
+  for (let i = 0; i < 256; ++i) {
+    const mine = {
+      id: i,
+      armed: false, 
+      state: "none", 
+      number: null,
+      open: false,
+      subscribe: (cb) => { mine._cb = cb },
+      emit: () => {mine._cb(mine)},
+    };
+    field.push(mine);
+  }
+
+
+
+  return field;
+}
+
+function getIdArmedMines(curId) {
+   const idArmedMines = getRandomArr(0, 255, 40);
+   if (idArmedMines.includes(curId)) {
+    return getIdArmedMines(curId);
+  } else {
+    return idArmedMines;
+  }
+}
+
+function getRandomArr(min, max, length) {
+  let arr = [];
+  let minId = Math.ceil(min);
+  let maxId = Math.ceil(max);
+  while (arr.length < length) {
+    arr.push(Math.floor(Math.random() * (maxId - minId)) + minId);
+  }
+
+  return arr;
+}
+
 function App() {
   const [arrMine, setArrMine] = useState(fieldMaker());
+  const [win, setWin] = useState(false);
+  const [loose, setLoose] = useState(false);
   // const [time, setTime] = useState([0, 0, 0]);
   const [score, setScore] = useState([0, 4, 0]);
   const [gameIsStart, setGameIsStart] = useState(true);
-  // const [isFirstClick, setIsFirstClick] = useState(true);
+  const [isFirstClick, setIsFirstClick] = useState(true);
 
-  function fieldMaker() {
-    const field = [];
-    for (let i = 0; i < 256; ++i) {
-      const mine = {
-        id: i,
-        armed: false,
-        unknow: false,
-        flag: false,
-        disarmed: false,
-        number: null,
-        mistake: false,
-        open: false,
-      };
-      field.push(mine);
+  function onLeftClick(id) {
+    const mine = arrMine.find((mine) => mine.id === id);
+    if (isFirstClick) {
+      const arrArmedMine = getIdArmedMines(id);
+      arrMine.forEach((mine) => {
+        if (arrArmedMine.includes(mine.id)) {
+          mine.armed = true;
+        }
+      })
+      setIsFirstClick(false);
     }
 
-    return field;
+    mine.open = true;
+
+    const isLoose = arrMine.some(m => m.armed && m.open);
+    if (loose === false && isLoose === true) {
+      setLoose(isLoose);
+    }
+    mine.emit();
   }
 
+  function onRightClick(id) {
+    if (isFirstClick) {
+      return
+    }
+    const mine = arrMine.find((mine) => mine.id === id);
+    if (mine.state === "none") {
+      mine.state = "flag";
+    } else if (mine.state === "flag") {
+      mine.state = "unknown";
+    } else {
+      mine.state = "none";
+    }
+  }
+
+  
+
   return (
-    <ArrMine.Provider
-      value={{
-        data: arrMine,
-        setData: (data) => {
-          setArrMine(data);
-        },
-      }}
-    >
-      {/* <GetTimer.Provider
-        value={{
-          data: time,
-          setTime: (data) => {
-            setTime(data);
-          },
-        }}
-      > */}
-      <GetScore.Provider
-        value={{
-          data: score,
-          setData: (data) => {
-            setScore(data);
-          },
-        }}
-      >
-        <GameIsStart.Provider
-          value={{
-            data: gameIsStart,
-            setData: (data) => {
-              setGameIsStart(data);
-            },
-          }}
-        >
-          {/* <IsFirstClick.Provider
-            value={{
-              data: isFirstClick,
-              setData: (data) => {
-                setIsFirstClick(data);
-              },
-            }}
-          > */}
-            <Game>
-              <Header />
-              <Field />
-            </Game>
-          {/* </IsFirstClick.Provider> */}
-        </GameIsStart.Provider>
-      </GetScore.Provider>
-      {/* </GetTimer.Provider> */}
-    </ArrMine.Provider>
+    <Game>
+      {/* <Header /> */}
+      <Field
+        arrMine={arrMine}
+        onLeftClick={onLeftClick}
+        onRightClick={onRightClick}
+      />
+    </Game>
   );
 }
 

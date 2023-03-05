@@ -4,15 +4,14 @@ import { ArrMine, IsFirstClick } from "./../../App";
 import { Mine } from "./../mine/mine.component";
 
 
-export function Field() {
-  const [isFirstClick, setIsFirstClick] = useState(true);
-  const arrMine = useContext(ArrMine);
+export function Field({ onLeftClick, onRightClick, arrMine }) {
+
 
   return (
     <>
       <div className="field">
-        {arrMine.data.map((mine) => (
-          <Mine key={mine.id} mine={mine} isFirstClick={isFirstClick} setIsFirstClick={() => {setIsFirstClick(false)}}/>
+        {arrMine.map((mine) => (
+          <Mine key={mine.id} mine={mine} onLeftClick={onLeftClick} onRightClick={onRightClick} />
         ))}
       </div>
     </>
