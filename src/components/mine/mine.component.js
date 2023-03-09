@@ -15,32 +15,25 @@ const NUMBERS = {
   0: "zero",
 };
 
-const STATE = {
-  open: "open",
-  mistake: "mistake",
-  armed: "armed",
-  flag: "flag",
-  unknow: "unknow",
-  disarmed: "disarmed",
-};
-
 export function Mine({ onLeftClick, onRightClick, mine }) {
   const [curMine, setCurMine] = useState(mine);
 
   useEffect(() => {
     mine.subscribe((newMine) => {
-      setCurMine({...newMine});
-    })
+      setCurMine({ ...newMine });
+    });
   }, []);
 
   let mineClass = "mine_close";
 
-  if (curMine.number) {
+  if (curMine.open === true && curMine.armed === true) {
+    mineClass = "mine_mistake";
+  } else if (curMine.number && curMine.open === true) {
     mineClass = "mine_" + NUMBERS[curMine.number];
   } else if (curMine.state === "flag") {
     mineClass = "mine_flag";
-  } else if (curMine.state === "unknown") {
-    mineClass = "mine_unknown";
+  } else if (curMine.state === "unknow") {
+    mineClass = "mine_unknow";
   } else if (curMine.open === true) {
     mineClass = "mine_open";
   }
@@ -50,11 +43,11 @@ export function Mine({ onLeftClick, onRightClick, mine }) {
       className={`mine ${mineClass}`}
       onClick={() => {
         onLeftClick(curMine.id);
-        setCurMine({...mine})
+        setCurMine({ ...mine });
       }}
-      onContextMenu={() => {
-        onRightClick(curMine.id);
-        setCurMine({...mine})
+      onContextMenu={(e) => {
+        onRightClick(curMine.id, e);
+        setCurMine({ ...mine });
       }}
     ></button>
   );
