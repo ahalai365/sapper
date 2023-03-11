@@ -1,36 +1,31 @@
-import { React, useContext, useRef, useEffect } from "react";
+import { React, useContext, useRef, useEffect, useState } from "react";
 import "./timer.styles.css";
 
-import { Number } from "./../number/number.component";
-import { GameIsStart, ToggleReset } from "./../../App";
-import { GetTimer } from "./../header/header.component";
+import { Number } from "../number/number.component";
+import { GameIsStart, ToggleReset } from "../../App";
+import { GetTimer } from "../header/header.component";
 
-export function Timer() {
-  const getTimer = useContext(GetTimer);
-  const gameIsReset = useContext(GameIsStart);
-
+export function Timer({ isFirstClick}) {
+  const [time, setTime] = useState([0, 0, 0]);
   const intervalRef = useRef();
 
   useEffect(() => {
-    if (!gameIsReset.data) {
+    if (isFirstClick) {
       clearInterval(intervalRef.current);
-      intervalRef.current = setInterval(
-        () => timer(getTimer.data, intervalRef.current),
-        1000
-      );
+      setTime([0, 0, 0]);
     } else {
       clearInterval(intervalRef.current);
       intervalRef.current = setInterval(
-        () => timer(getTimer.data, intervalRef.current),
+        () => timer(time, intervalRef.current),
         1000
       );
     }
-  }, [gameIsReset.data]);
+  }, [isFirstClick]);
 
   function timer(value, clock) {
     if (value[0] === 9 && value[1] === 9 && value[2] === 9) {
       clearInterval(clock);
-      getTimer.setTime(
+      setTime(
         value.map((e) => {
           return e;
         })
@@ -48,7 +43,7 @@ export function Timer() {
     } else {
       value = [9, 9, 9];
     }
-    getTimer.setTime(
+    setTime(
       value.map((e) => {
         return e;
       })
@@ -58,7 +53,7 @@ export function Timer() {
   return (
     <>
       <div className="timer">
-        {getTimer.data.map((number, index) => {
+        {time.map((number, index) => {
           return <Number key={index} number={number} />;
         })}
       </div>

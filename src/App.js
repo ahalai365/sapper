@@ -5,12 +5,6 @@ import { Game } from "./components/game/game.component";
 import { Header } from "./components/header/header.component";
 import { Field } from "./components/field/field.component";
 
-export const ArrMine = createContext();
-// export const GetTimer = createContext();
-export const GetScore = createContext();
-export const GameIsStart = createContext();
-// export const IsFirstClick = createContext();
-
 // создание поля
 function fieldMaker() {
   const field = [];
@@ -59,12 +53,67 @@ function getRandomArr(min, max, length) {
 
 function App() {
   const [arrMine, setArrMine] = useState(fieldMaker());
-  const [win, setWin] = useState(false);
   const [loose, setLoose] = useState(false);
-  // const [time, setTime] = useState([0, 0, 0]);
   const [score, setScore] = useState([0, 4, 0]);
-  const [gameIsStart, setGameIsStart] = useState(true);
   const [isFirstClick, setIsFirstClick] = useState(true);
+  const [win, setWin] = useState(false);
+
+  // useEffect(() => {
+  //   if (isFirstClick === false) {
+  //     setArrMine(fieldMaker());
+  //   }
+  // }, [loose, win]);
+
+  useEffect(() => {
+    if (+score.join("") === 0) {
+      if (
+        arrMine.filter((mine) => mine.armed === true && mine.state === "flag")
+          .length === 40
+      ) {
+        setWin(true);
+      }
+    }
+  }, [score]);
+
+  function handleSmileClick() {
+    setIsFirstClick(true);
+    setScore([0, 4, 0]);
+    setLoose(false);
+    setWin(false);
+    arrMine.forEach((mine) => {
+      mine.armed = false;
+      mine.state = "none";
+      mine.number = null;
+      mine.open = false;
+      mine.emit();
+    });
+    console.log(arrMine);
+  }
+
+  function getScoreIncrement(score) {
+    let newScore = +score.join("");
+    newScore += 1;
+    newScore = Array.from(String(newScore), Number);
+    if (newScore < 10) {
+      newScore.unshift(0);
+    }
+    newScore.unshift(0);
+    setScore(newScore);
+  }
+
+  function getScoreDecrement(score) {
+    let newScore = +score.join("");
+    if (newScore === 0) {
+      return;
+    }
+    newScore -= 1;
+    newScore = Array.from(String(newScore), Number);
+    if (newScore < 10) {
+      newScore.unshift(0);
+    }
+    newScore.unshift(0);
+    setScore(newScore);
+  }
 
   function onLeftClick(id) {
     if (isFirstClick) {
@@ -79,28 +128,41 @@ function App() {
 
     // открытие
     function openMine(mine) {
-      console.log("in open", mine);
-      if (mine.open === false && mine.state === "none") {
-        mine.open = true;
-        mine.number = getCount(mine);
-        isBomb(mine);
+      if (mine === undefined) {
+        return;
       }
+      if (mine.open === true) {
+        return;
+      }
+
+      mine.open = true;
 
       if (isBomb(mine)) {
-        
+        setLoose(true);
       }
 
-      // if (getCount(mine) === null) {
-      //   for (let x = -1; x <= 1; x++) {
-      //     for (let y = -1; y <= 1; y++) {
-      //       const nextMine = arrMine.find(
-      //         (nextMine) => nextMine.id === mine.id + x + y * 17
-      //       );
-      //       nextMine.open = true;
-      //       nextMine.emit();
-      //     }
-      //   }
-      // }
+      const count = getCount(mine);
+
+      if (count !== null) {
+        mine.number = count;
+        mine.emit();
+        return;
+      }
+      mine.emit();
+      for (let x = -1; x <= 1; x++) {
+        for (let y = -1; y <= 1; y++) {
+          let newMineId = mine.id + x + y * 16;
+
+          if (newMineId % 16 === 0 && x === 1) {
+            newMineId = undefined;
+          }
+
+          if ((newMineId + 1) % 16 === 0 && x === -1) {
+            newMineId = undefined;
+          }
+          openMine(arrMine.find((curMine) => curMine.id === newMineId));
+        }
+      }
     }
 
     // попадание в просак и проверка просака
@@ -108,22 +170,29 @@ function App() {
       if (mine === undefined) {
         return;
       } else if (mine.armed === true && mine.open === true) {
-        setLoose(true);
+        return true;
       } else if (mine.armed === true && mine.open === false) {
         return true;
       }
+
+      return false;
     }
 
     // перебор мин вокруг клика
     function getCount(mine) {
-      let curId = mine.id;
-      console.log("curId", curId);
       let count = null;
       for (let x = -1; x <= 1; x++) {
         for (let y = -1; y <= 1; y++) {
-          if (
-            isBomb(arrMine.find((curMine) => curMine.id === curId + x + y * 17))
-          ) {
+          let newMineId = mine.id + x + y * 16;
+
+          if (newMineId % 16 === 0 && x === 1) {
+            newMineId = undefined;
+          }
+
+          if ((newMineId + 1) % 16 === 0 && x === -1) {
+            newMineId = undefined;
+          }
+          if (isBomb(arrMine.find((curMine) => curMine.id === newMineId))) {
             count++;
           }
         }
@@ -145,49 +214,6 @@ function App() {
     }
     openMine(mine);
     mine.emit();
-    // function mineHandler(curId) {
-    //   const arrCheckMine = [];
-    //   const nextStep = [];
-
-    //   for (let i = 0; i < 3; i++) {
-    //     const chekedMine = arrMine.find((mine) => mine.id === curId - 17 + i);
-    //     if (chekedMine !== undefined && chekedMine.open === false) {
-    //       arrCheckMine.push(chekedMine);
-    //     }
-    //   }
-    //   for (let i = -1; i < 2; i++) {
-    //     const chekedMine = arrMine.find((mine) => mine.id === curId - i);
-    //     if (chekedMine !== undefined && chekedMine.open === false) {
-    //       arrCheckMine.push(chekedMine);
-    //     }
-    //     // arrCheckMine.push(arrMine.find((mine) => mine.id === curId - i));
-    //   }
-    //   for (let i = 0; i < 3; i++) {
-    //     const chekedMine = arrMine.find((mine) => mine.id === curId + 17 - i);
-    //     if (chekedMine !== undefined && chekedMine.open === false) {
-    //       arrCheckMine.push(chekedMine);
-    //     }
-    //     // arrCheckMine.push(arrMine.find((mine) => mine.id === curId + 17 - i));
-    //   }
-    //   console.log(arrCheckMine);
-    //   arrCheckMine.forEach((chekedMine) => {
-    //     if (chekedMine.armed === true) {
-    //       mine.number += 1;
-    //     } else if (chekedMine.open === false) {
-    //       nextStep.push(chekedMine);
-    //     }
-    //     if (chekedMine.id === curId) {
-    //       mine.open = true;
-    //     }
-    //     mine.emit();
-    //   });
-    //   nextStep.forEach((mine) => mineHandler(mine.id));
-    // }
-
-    // const isLoose = arrMine.some((m) => m.armed && m.open);
-    // if (loose === false && isLoose === true) {
-    //   setLoose(isLoose);
-    // }
   }
 
   function onRightClick(id, e) {
@@ -195,11 +221,17 @@ function App() {
     if (isFirstClick) {
       return;
     }
+
+    if (loose) {
+      return;
+    }
     const mine = arrMine.find((mine) => mine.id === id);
-    if (mine.state === "none") {
+    if (mine.state === "none" && +score.join("") > 0) {
       mine.state = "flag";
+      getScoreDecrement(score);
     } else if (mine.state === "flag") {
       mine.state = "unknow";
+      getScoreIncrement(score);
     } else {
       mine.state = "none";
     }
@@ -209,11 +241,17 @@ function App() {
 
   return (
     <Game>
-      {/* <Header /> */}
+      <Header
+        isFirstClick={isFirstClick}
+        score={score}
+        onClick={handleSmileClick}
+        win={win}
+      />
       <Field
         arrMine={arrMine}
         onLeftClick={onLeftClick}
         onRightClick={onRightClick}
+        loose={loose}
       />
     </Game>
   );

@@ -1,5 +1,4 @@
-import { React, useContext, useEffect, useState } from "react";
-import { ArrMine, IsFirstClick } from "./../../App";
+import { React, useEffect, useState } from "react";
 import "./mine.styles.css";
 
 const NUMBERS = {
@@ -15,7 +14,7 @@ const NUMBERS = {
   0: "zero",
 };
 
-export function Mine({ onLeftClick, onRightClick, mine }) {
+export function Mine({ onLeftClick, onRightClick, mine, loose }) {
   const [curMine, setCurMine] = useState(mine);
 
   useEffect(() => {
@@ -27,15 +26,27 @@ export function Mine({ onLeftClick, onRightClick, mine }) {
   let mineClass = "mine_close";
 
   if (curMine.open === true && curMine.armed === true) {
-    mineClass = "mine_mistake";
+    mineClass = "mine_boom";
   } else if (curMine.number && curMine.open === true) {
     mineClass = "mine_" + NUMBERS[curMine.number];
-  } else if (curMine.state === "flag") {
-    mineClass = "mine_flag";
   } else if (curMine.state === "unknow") {
     mineClass = "mine_unknow";
   } else if (curMine.open === true) {
     mineClass = "mine_open";
+  } else if (
+    curMine.open === false &&
+    loose === true &&
+    curMine.armed === true
+  ) {
+    mineClass = "mine_armed";
+  } else if (
+    loose === true &&
+    curMine.armed === false &&
+    curMine.state === "flag"
+  ) {
+    mineClass = "mine_mistake";
+  } else if (curMine.state === "flag") {
+    mineClass = "mine_flag";
   }
 
   return (
