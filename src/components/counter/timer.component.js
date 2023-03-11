@@ -5,7 +5,7 @@ import { Number } from "../number/number.component";
 import { GameIsStart, ToggleReset } from "../../App";
 import { GetTimer } from "../header/header.component";
 
-export function Timer({ isFirstClick}) {
+export function Timer({ isFirstClick, win, loose }) {
   const [time, setTime] = useState([0, 0, 0]);
   const intervalRef = useRef();
 
@@ -20,7 +20,10 @@ export function Timer({ isFirstClick}) {
         1000
       );
     }
-  }, [isFirstClick]);
+    if (win === true || loose === true) {
+      clearInterval(intervalRef.current);
+    }
+  }, [isFirstClick, win, loose]);
 
   function timer(value, clock) {
     if (value[0] === 9 && value[1] === 9 && value[2] === 9) {
